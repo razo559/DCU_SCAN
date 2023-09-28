@@ -116,13 +116,14 @@ $bitlockerStatus=$($BLinfo.ProtectionStatus)
 # Pause bitlocker if enabled
 if( $bitlockerStatus -eq "On") {
     debugmsg "Bitlocker is activated - pausing it until next reboot."
-    $BLpause=Start-Process $env:SystemDrive\Windows\System32\manage-bde.exe -wait -PassThru -ArgumentList "-protectors -disable $env:SystemDrive"
-    $bitlockerPause = $($BLpause.ExitCode)
-        if( $bitlockerPause -eq 0) {
-            debugmsg "Bitlocker paused successfully for drive $($env:SystemDrive)"
-            } else {
-            endscript 11006 "Bitlocker is activated and could not be paused."
-            }
+       Suspend-BitLocker -MountPoint "C:" -RebootCount 1 -Verbose
+#    $BLpause=Start-Process $env:SystemDrive\Windows\System32\manage-bde.exe -wait -PassThru -ArgumentList "-protectors -disable $env:SystemDrive"
+#    $bitlockerPause = $($BLpause.ExitCode)
+#        if( $bitlockerPause -eq 0) {
+#            debugmsg "Bitlocker paused successfully for drive $($env:SystemDrive)"
+#            } else {
+#            endscript 11006 "Bitlocker is activated and could not be paused."
+#            }
 }
 
 
