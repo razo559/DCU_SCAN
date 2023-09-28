@@ -56,9 +56,9 @@ if ($DebugMessages -eq "1") {
 
 # --------------------------------------------------------------- Functions --------------------------------------------------------------
 # End this script with message and errorlevel
-# call this function with "endscript errormessage errorlevel" 
-# e.g.: endscript 2 "The cake is a lie"
-function endscript($exitcode, $msg) {
+# call this function with "debugmsg errormessage errorlevel" 
+# e.g.: debugmsg 2 "The cake is a lie"
+function debugmsg($exitcode, $msg) {
     # Define var $ecode as script-wide so it can be modified by other functions.
     $script:ecode = $exitcode
     debugmsg $msg
@@ -87,14 +87,14 @@ if (Get-WmiObject win32_SystemEnclosure -Filter: "Manufacturer LIKE 'Dell Inc.'"
     debugmsg "This system is identified as Dell-system."
     } else { 
     $manufacturer = $(Get-WmiObject win32_SystemEnclosure | Select-Object Manufacturer)
-    endscript 11000 "This system could not be identified as Dell system - Found manufacturer: $manufacturer" 
+    debugmsg 11000 "This system could not be identified as Dell system - Found manufacturer: $manufacturer" 
 }
 
 # Check if the Dell Command | Update command-line exe-file exists:
 if (Test-Path $DellCommandUpdateExePath) {
     $foundDellCommandUpdateExe = $true
 } else {
-    endscript 11002 "Dell Command | Update software found but .exe could not be found in defined Path $DellCommandUpdateExePath"
+    debugmsg 11002 "Dell Command | Update software found but .exe could not be found in defined Path $DellCommandUpdateExePath"
 }
 
 
@@ -116,13 +116,13 @@ $bitlockerStatus=$($BLinfo.ProtectionStatus)
 # Pause bitlocker if enabled
 if( $bitlockerStatus -eq "On") {
     debugmsg "Bitlocker is activated - pausing it until next reboot."
-       Suspend-BitLocker -MountPoint "C:" -RebootCount 1 -Verbose
-#    $BLpause=Start-Process $env:SystemDrive\Windows\System32\manage-bde.exe -wait -PassThru -ArgumentList "-protectors -disable $env:SystemDrive"
+    #$BLpause = Start-Process $env:SystemDrive\Windows\System32\manage-bde.exe -wait -PassThru -ArgumentList "-protectors -disable $env:SystemDrive"
+   Suspend-BitLocker -MountPoint "C:" -RebootCount 1 -Verbose
 #    $bitlockerPause = $($BLpause.ExitCode)
 #        if( $bitlockerPause -eq 0) {
-#            debugmsg "Bitlocker paused successfully for drive $($env:SystemDrive)"
+#            debugmsg "Bitlocker paused successfully"
 #            } else {
-#            endscript 11006 "Bitlocker is activated and could not be paused."
+#            debugmsg 11006 "Bitlocker is activated and could not be paused."
 #            }
 }
 
@@ -137,23 +137,23 @@ $DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/applyUpdate
 # Interpret the returncode of patching-process:
 switch ( $DCUPatching.ExitCode ) {
     0 {
-        endscript 0 "Successfully patched this system."
+        debugmsg 0 "Successfully patched this system."
     }
     1 { 
-        endscript 1 "Successfully patched this system. Reboot requiered."
+        debugmsg 1 "Successfully patched this system. Reboot requiered."
     }
     2 {
-        endscript 2 "Fatal error during patch-process - Check $($env:Temp) for log files."
+        debugmsg 2 "Fatal error during patch-process - Check $($env:Temp) for log files."
     }
     3 {
-        endscript 3 "Error during patch-process - Check $($env:Temp) for log files."
+        debugmsg 3 "Error during patch-process - Check $($env:Temp) for log files."
     }
     4 {
-        endscript 4 "Dell Update Command detected an invalid system and stopped."
+        debugmsg 4 "Dell Update Command detected an invalid system and stopped."
     }
     5 {
-        endscript 5 "Successfully patched this system. Reboot and scan required."
+        debugmsg 5 "Successfully patched this system. Reboot and scan required."
     }
 }
 
-endscript 11010 "Unknown result of Dell Command | Update patching."
+debugmsg 11010 "Unknown result of Dell Command | Update patching."
