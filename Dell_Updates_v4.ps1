@@ -157,3 +157,4 @@ switch ( $DCUPatching.ExitCode ) {
 }
 
 debugmsg 11010 "Unknown result of Dell Command | Update patching."
+Stop-Transcript
