@@ -4,7 +4,7 @@ param (
     [string]$OutputFileLocation = "$env:windir\temp\DCU_Prep_$(get-date -f yyyy.MM.dd-H.m).log",
     [string]$BIOSPassword = "-"
 )
-Start-ScheduledTask -TaskName "DCU_Removal"
+#Start-ScheduledTask -TaskName "DCU_Removal"
 # Environmentvariables:
 # Path to .exe files. 
 $DellCommandUpdateFolder = "C:\Program Files\Dell\CommandUpdate"
