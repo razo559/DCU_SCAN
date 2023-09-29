@@ -81,6 +81,22 @@ function debugmsg($dmsg) {
 
 # -------------------------------------------------------- Check for Dell-environment -----------------------------------------------------
 
+# Check if this is a Dell system:
+if (Get-WmiObject win32_SystemEnclosure -Filter: "Manufacturer LIKE 'Dell Inc.'") { 
+    $isDellSystem = $true
+    debugmsg "This system is identified as Dell-system."
+    } else { 
+    $manufacturer = $(Get-WmiObject win32_SystemEnclosure | Select-Object Manufacturer)
+    debugmsg 11000 "This system could not be identified as Dell system - Found manufacturer: $manufacturer" 
+}
+
+# Check if the Dell Command | Update command-line exe-file exists:
+if (Test-Path $DellCommandUpdateExePath) {
+    $foundDellCommandUpdateExe = $true
+} else {
+    debugmsg 11002 "Dell Command | Update software found but .exe could not be found in defined Path $DellCommandUpdateExePath"
+}
+
 # Check if Dell Command | Update is running already and kill it:
 $checkForDCU = Get-Process dcu-cli.exe -ErrorAction SilentlyContinue
 if ( $checkForDCU -ne $null ) {
@@ -113,7 +129,7 @@ if( $bitlockerStatus -eq "On") {
 
 # Start patching
 #Get-Service -name 'DellClientManagementService' | Stop-Service -Force -Verbose
-Get-ChildItem -Path "C:\ProgramData\Dell\UpdateService" -Recurse | Remove-Item -Verbose -Confirm:$false
+#Get-ChildItem -Path "C:\ProgramData\Dell\UpdateService" -Recurse | Remove-Item -Verbose -Confirm:$false
 debugmsg "Starting Patchprocess silently. Logging into c:\tmp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log"
 $DCU_category = "firmware,driver"  # bios,firmware,driver,application,others
 $DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
