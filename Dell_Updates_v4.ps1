@@ -1,7 +1,7 @@
 
 param (
     [int]$debug = 1,
-    [string]$OutputFileLocation = "$env:windir\temp\DCU_Prep_$(get-date -f yyyy.MM.dd-H.m).log",
+    [string]$OutputFileLocation = "c:\tmp\Dell_Command_Temp\DCU_Prep_$(get-date -f yyyy.MM.dd-H.m).log",
     [string]$BIOSPassword = "-"
 )
 #Start-ScheduledTask -TaskName "DCU_Removal"
@@ -130,9 +130,9 @@ if( $bitlockerStatus -eq "On") {
 # Start patching
 #Get-Service -name 'DellClientManagementService' | Stop-Service -Force -Verbose
 #Get-ChildItem -Path "C:\ProgramData\Dell\UpdateService" -Recurse | Remove-Item -Verbose -Confirm:$false
-debugmsg "Starting Patchprocess silently. Logging into c:\tmp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log"
+debugmsg "Starting Patchprocess silently. Logging into c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log"
 $DCU_category = "firmware,driver"  # bios,firmware,driver,application,others
-$DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
+$DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
 
 # Interpret the returncode of patching-process:
 switch ( $DCUPatching.ExitCode ) {
