@@ -16,7 +16,7 @@ $DellCommandConfigureExePath = "$DellCommandConfigureFolder\cctk.exe"
  ---- Exit Codes ----
  These are the codes for Dell Command | Update
      0 = "Successfully patched this system."
-     1 = "Reboot requiered"
+     1 = "Reboot required"
      2 = "Fatal error during patch-process - Check $($env:Temp) for log files."
      3 = "Error during patch-process - Check $($env:Temp) for log files."
      4 = "Dell Update Command detected an invalid system and stopped."
@@ -108,31 +108,17 @@ if ( $checkForDCU -ne $null ) {
 # -------------------------------------------------------- Check security-settings --------------------------------------------------------
 
 # Check if Bitlocker is enabled on Systemdrive:
-$BLinfo = Get-Bitlockervolume -MountPoint $env:SystemDrive 
-$bitlockerStatus=$($BLinfo.ProtectionStatus)
+#$BLinfo = Get-Bitlockervolume -MountPoint $env:SystemDrive 
+#$bitlockerStatus=$($BLinfo.ProtectionStatus)
 
 # --------------------------------------------------------------- Tasks -------------------------------------------------------------------
-# Pause bitlocker if enabled
-if( $bitlockerStatus -eq "On") {
-    debugmsg "Bitlocker is activated - pausing it until next reboot."
-    #$BLpause = Start-Process $env:SystemDrive\Windows\System32\manage-bde.exe -wait -PassThru -ArgumentList "-protectors -disable $env:SystemDrive"
-   Suspend-BitLocker -MountPoint "C:" -RebootCount 1 -Verbose
-#    $bitlockerPause = $($BLpause.ExitCode)
-#        if( $bitlockerPause -eq 0) {
-#            debugmsg "Bitlocker paused successfully"
-#            } else {
-#            debugmsg 11006 "Bitlocker is activated and could not be paused."
-#            }
-}
-
-
 
 # Start patching
 #Get-Service -name 'DellClientManagementService' | Stop-Service -Force -Verbose
 #Get-ChildItem -Path "C:\ProgramData\Dell\UpdateService" -Recurse | Remove-Item -Verbose -Confirm:$false
 debugmsg "Starting Patchprocess silently. Logging into c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log"
 $DCU_category = "firmware,driver"  # bios,firmware,driver,application,others
-$DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
+$DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/scan -outputLog=c:\tmp\Dell_Command_Temp\Scan_Results_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
 # "/scan -outputLog=c:\tmp\Dell_Command_Temp\Scan_Results_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
 #"/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
 
