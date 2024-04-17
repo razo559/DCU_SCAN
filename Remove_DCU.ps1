@@ -24,6 +24,6 @@ foreach ($GUID in $App) {
 if ($(Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue).TaskName -eq $TaskName) {
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$False -Verbose
 }
-Get-ChildItem -Path "C:\tmp\Dell_Command_Temp" -Recurse | Remove-Item -Verbose -Confirm:$false
+#Get-ChildItem -Path "C:\tmp\Dell_Command_Temp" -Recurse | Remove-Item -Verbose -Confirm:$false
 
 Stop-Transcript
