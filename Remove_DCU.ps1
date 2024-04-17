@@ -1,4 +1,4 @@
-﻿Start-Transcript -Path "$env:windir\temp\DCU_Task_Reboot.log"
+﻿Start-Transcript -Path "C:\tmp\Dell_Command_Temp\DCU_Task_Reboot.log"
 $Name = "Dell Command*"
 $ProcName = "*Dell*"
 $Timestamp = Get-Date -Format "yyyy-MM-dd_THHmmss" -Verbose
