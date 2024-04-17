@@ -132,7 +132,7 @@ if( $bitlockerStatus -eq "On") {
 #Get-ChildItem -Path "C:\ProgramData\Dell\UpdateService" -Recurse | Remove-Item -Verbose -Confirm:$false
 debugmsg "Starting Patchprocess silently. Logging into c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log"
 $DCU_category = "firmware,driver"  # bios,firmware,driver,application,others
-$DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/scan -outputLog=c:\tmp\Dell_Command_Temp\Scan_Results_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose # "/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
+$DCUPatching=Start-Process $DellCommandUpdateExePath -ArgumentList "/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
 # "/scan -outputLog=c:\tmp\Dell_Command_Temp\Scan_Results_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
 #"/applyUpdates -autoSuspendBitLocker=enable -reboot=disable -updateType=$DCU_category -outputLog=c:\tmp\Dell_Command_Temp\DCU_Patchlogs_$(get-date -f yyyy.MM.dd_H-m).log" -Wait -Passthru -Verbose
 
